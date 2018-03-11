@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/feature?useSSL=false
+    username: feature
+    password: feature123
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update

@@ -1,0 +1,54 @@
+{
+  "info": {
+    "name": "wf.code-club.feature-toggle",
+    "_postman_id": "a1252583-8d7d-0b36-1e77-847ecc0ce607",
+    "description": "",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Week 1 Get all",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {},
+        "url": {
+          "raw": "http://localhost:8080/api/features",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "features"
+          ]
+        },
+        "description": ""
+      },
+      "response": []
+    },
+    {
+      "name": "Week 1 POST",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {},
+        "url": {
+          "raw": "http://localhost:8080/api/features",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "features"
+          ]
+        },
+        "description": ""
+      },
+      "response": []
+    }
+  ]
+}
