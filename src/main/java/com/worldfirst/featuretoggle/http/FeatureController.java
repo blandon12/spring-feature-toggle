@@ -5,6 +5,7 @@ import com.worldfirst.featuretoggle.feature.FeatureRepository;
 import com.worldfirst.featuretoggle.http.contract.CreateFeatureRequest;
 import com.worldfirst.featuretoggle.http.contract.EntityNotFoundException;
 import com.worldfirst.featuretoggle.http.contract.ErrorResponse;
+import com.worldfirst.featuretoggle.http.contract.UpdateFeatureRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,22 @@ public class FeatureController {
         throw new EntityNotFoundException();
     }
 
+    @PutMapping("/api/features/{featureId}")
+    public Feature updateFeature(
+            @PathVariable("featureId") String featureId,
+            @RequestBody UpdateFeatureRequest request
+    ) {
+        Feature feature = featureRepository.findOne(featureId);
+
+        if (feature != null) {
+            feature.updateDescription(request.getDescription());
+            featureRepository.save(feature);
+
+            return feature;
+        }
+
+        throw new EntityNotFoundException();
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)

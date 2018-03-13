@@ -47,4 +47,11 @@ public class Feature {
         return creationTime;
     }
 
+    public void updateDescription(String newDescription) {
+        description = newDescription;
+    }
+
+    public void updateDescription(char[] newDescription) {
+        description = String.valueOf(newDescription);
+    }
 }
