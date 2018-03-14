@@ -2,6 +2,8 @@ package com.worldfirst.featuretoggle.http;
 
 import com.worldfirst.featuretoggle.feature.Feature;
 import com.worldfirst.featuretoggle.feature.FeatureRepository;
+import com.worldfirst.featuretoggle.feature.exception.FeatureDeletedException;
+import com.worldfirst.featuretoggle.http.contract.UnprocessableEntityException;
 import com.worldfirst.featuretoggle.http.contract.CreateFeatureRequest;
 import com.worldfirst.featuretoggle.http.contract.EntityNotFoundException;
 import com.worldfirst.featuretoggle.http.contract.ErrorResponse;
@@ -9,8 +11,6 @@ import com.worldfirst.featuretoggle.http.contract.UpdateFeatureRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 public class FeatureController {
@@ -58,13 +58,37 @@ public class FeatureController {
         Feature feature = featureRepository.findOne(featureId);
 
         if (feature != null) {
-            feature.updateDescription(request.getDescription());
+            try {
+                feature.updateDescription(request.getDescription());
+            } catch (FeatureDeletedException e) {
+                throw new EntityNotFoundException();
+            }
             featureRepository.save(feature);
 
             return feature;
         }
 
         throw new EntityNotFoundException();
+    }
+
+//    @DeleteMapping("/api/features/{featureId}")
+    @RequestMapping(
+            path = "/api/features/{featureId}",
+            method = RequestMethod.DELETE
+    )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFeature(@PathVariable("featureId") String featureId) {
+        Feature feature = featureRepository.findOne(featureId);
+
+        if (feature == null) {
+            throw new EntityNotFoundException();
+        }
+
+        try {
+            feature.delete();
+        } catch (FeatureDeletedException e) {
+            throw new UnprocessableEntityException();
+        }
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -77,5 +101,11 @@ public class FeatureController {
     @ExceptionHandler(EntityNotFoundException.class)
     public ErrorResponse handleNotFound() {
         return new ErrorResponse("Object not found");
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(UnprocessableEntityException.class)
+    public ErrorResponse unprossableEntity() {
+        return new ErrorResponse("Change in entity could not be applied");
     }
 }
