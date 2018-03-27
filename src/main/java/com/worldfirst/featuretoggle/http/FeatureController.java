@@ -2,6 +2,7 @@ package com.worldfirst.featuretoggle.http;
 
 import com.worldfirst.featuretoggle.feature.Feature;
 import com.worldfirst.featuretoggle.feature.FeatureRepository;
+import com.worldfirst.featuretoggle.feature.FeatureService;
 import com.worldfirst.featuretoggle.feature.exception.FeatureDeletedException;
 import com.worldfirst.featuretoggle.http.contract.UnprocessableEntityException;
 import com.worldfirst.featuretoggle.http.contract.CreateFeatureRequest;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class FeatureController {
 
     private FeatureRepository featureRepository;
+    private FeatureService featureService;
 
-    public FeatureController(FeatureRepository featureRepository) {
+    public FeatureController(FeatureRepository featureRepository, FeatureService featureService) {
         this.featureRepository = featureRepository;
+        this.featureService = featureService;
     }
 
     @GetMapping("/api/features")
@@ -29,14 +32,8 @@ public class FeatureController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/features")
     public void create(@RequestBody CreateFeatureRequest request) {
-        Feature feature = new Feature(
-//                UUID.randomUUID().toString(),
-//                "Random Feature"
-                request.getId(),
-                request.getDescription()
-        );
 
-        featureRepository.save(feature);
+        featureService.createFeature(request.getId(), request.getDescription());
     }
 
     @GetMapping("/api/features/{featureId}")
