@@ -1,7 +1,6 @@
 package com.worldfirst.featuretoggle.http;
 
 import com.worldfirst.featuretoggle.feature.Feature;
-import com.worldfirst.featuretoggle.feature.FeatureRepository;
 import com.worldfirst.featuretoggle.feature.FeatureService;
 import com.worldfirst.featuretoggle.feature.exception.FeatureDeletedException;
 import com.worldfirst.featuretoggle.http.contract.UnprocessableEntityException;
@@ -16,17 +15,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class FeatureController {
 
-    private FeatureRepository featureRepository;
     private FeatureService featureService;
 
-    public FeatureController(FeatureRepository featureRepository, FeatureService featureService) {
-        this.featureRepository = featureRepository;
+    public FeatureController(FeatureService featureService) {
         this.featureService = featureService;
     }
 
     @GetMapping("/api/features")
     public Iterable<Feature> findAll() {
-        return featureRepository.findAll();
+        return featureService.findAll();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,13 +35,8 @@ public class FeatureController {
 
     @GetMapping("/api/features/{featureId}")
     public Feature getOne(@PathVariable("featureId") String featureId) {
-        Feature feature = featureRepository.findOne(featureId);
-
-        if (feature != null) {
-            return feature;
-        }
-
-        throw new EntityNotFoundException();
+        return featureService.findOne(featureId)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @PutMapping("/api/features/{featureId}")
@@ -52,20 +44,11 @@ public class FeatureController {
             @PathVariable("featureId") String featureId,
             @RequestBody UpdateFeatureRequest request
     ) {
-        Feature feature = featureRepository.findOne(featureId);
-
-        if (feature != null) {
-            try {
-                feature.updateDescription(request.getDescription());
-            } catch (FeatureDeletedException e) {
-                throw new EntityNotFoundException();
-            }
-            featureRepository.save(feature);
-
-            return feature;
+        try {
+            return featureService.updateDescription(featureId, request.getDescription());
+        } catch (FeatureDeletedException e) {
+            throw new EntityNotFoundException();
         }
-
-        throw new EntityNotFoundException();
     }
 
 //    @DeleteMapping("/api/features/{featureId}")
@@ -75,14 +58,8 @@ public class FeatureController {
     )
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFeature(@PathVariable("featureId") String featureId) {
-        Feature feature = featureRepository.findOne(featureId);
-
-        if (feature == null) {
-            throw new EntityNotFoundException();
-        }
-
         try {
-            feature.delete();
+            featureService.delete(featureId);
         } catch (FeatureDeletedException e) {
             throw new UnprocessableEntityException();
         }
