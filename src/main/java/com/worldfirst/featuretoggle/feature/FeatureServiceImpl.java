@@ -15,16 +15,19 @@ public class FeatureServiceImpl implements FeatureService {
         this.featureRepository = featureRepository;
     }
 
+    @Override
     public void createFeature(String id, String description) {
         Feature feature = new Feature(id, description);
 
         featureRepository.save(feature);
     }
 
+    @Override
     public Optional<Feature> findOne(String id) {
         return featureRepository.findById(id);
     }
 
+    @Override
     public Feature updateDescription(String id, String newDescription) throws FeatureDeletedException {
         Optional<Feature> featureOptional = findOne(id);
 
