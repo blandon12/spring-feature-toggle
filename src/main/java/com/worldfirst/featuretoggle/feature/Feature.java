@@ -57,7 +57,7 @@ public class Feature {
         return deletionTime;
     }
 
-    private boolean isDeleted() {
+    public boolean isDeleted() {
         return deletionTime != null;
     }
 

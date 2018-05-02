@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/layout :: head"></head>
+<body>
+<nav th:include="fragments/layout :: nav"></nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 th:text="${header}">Features list via layout</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 ">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Is Deleted?</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="feature : ${features}">
+                    <td th:text="${feature.id}">${feature.id}</td>
+                    <td th:text="${feature.description}">$(feature.description)</td>
+                    <td>
+                        <span th:if="${feature.deleted}">Yes</span>
+                        <span th:unless="${feature.deleted}">No</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
